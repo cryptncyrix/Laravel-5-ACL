@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AclRessource extends Migration {
+class AclResource extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,7 +12,7 @@ class AclRessource extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('ressources', function(Blueprint $table)
+		Schema::create('resources', function(Blueprint $table)
 		{
 			$table->increments('id')->unsigned();
                         $table->string('name')->unique();
@@ -28,7 +28,7 @@ class AclRessource extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('ressources');
+		Schema::drop('resources');
 	}
 
 }
