@@ -4,7 +4,7 @@ use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Routing\Middleware;
 
-use App\Database\Models\Ressource;
+use App\Database\Models\Resource;
 
 class Acl implements Middleware {
 
@@ -20,7 +20,7 @@ class Acl implements Middleware {
 	 *
 	 * @var Guard
 	 */
-	protected $ressource;
+	protected $resource;
 
 	/**
 	 * Create a new filter instance.
@@ -28,10 +28,10 @@ class Acl implements Middleware {
 	 * @param  Guard  $auth
 	 * @return void
 	 */
-  	public function __construct(Guard $auth, Ressource $ressource)
+  	public function __construct(Guard $auth, Resource $resource)
 	 {
- 		$this->auth      = $auth;
-                $this->ressource = $ressource;
+ 		$this->auth     = $auth;
+                $this->resource = $resource;
   	}
 
 	/**
@@ -47,9 +47,9 @@ class Acl implements Middleware {
 	    {
 
                 $objectUser = $this->auth->user();
-                $objectUser->load('roles', 'roles.ressources', 'ressources');
+                $objectUser->load('roles', 'roles.resources', 'resources');
     
-                if( $this->getUserAccess($objectUser->ressources,  $request->route()->getName())   )
+                if( $this->getUserAccess($objectUser->resources,  $request->route()->getName())   )
                 {
                     return $next($request);
 
@@ -66,7 +66,7 @@ class Acl implements Middleware {
 	}
 
 	/**
-	 * Get the default access for this ressource
+	 * Get the default access for this resource
 	 *
 	 * @param  $stringName
 	 * @return bool
@@ -74,22 +74,22 @@ class Acl implements Middleware {
 
         protected function getDefaultAccess($stringName) 
         {
-            return $this->ressource->getAccessByname($stringName)->default_access;
+            return $this->resource->getAccessByname($stringName)->default_access;
         }
 
 	/**
 	 * Check - is the ressource set ;)
 	 *
-	 * @param  $objectRessources
-	 * @param  $stringRessource
+	 * @param  $objectResources
+	 * @param  $stringResource
 	 * @return bool
 	 */
 
-        protected function getUserAccess($objectRessources, $stringRessource)
+        protected function getUserAccess($objectResources, $stringResource)
         {
-            foreach($objectRessources as $value) {
+            foreach($objectResources as $value) {
 
-                 if($value->name == $stringRessource){
+                 if($value->name == $stringResource){
                      return true;
                  }
             }  
@@ -97,14 +97,14 @@ class Acl implements Middleware {
         }
 
 	/**
-	 * Check - has the Role the Ressource ;)
+	 * Check - has the Role the Resource ;)
 	 *
 	 * @param  $objectRole
-	 * @param  $stringRessource
+	 * @param  $stringResource
 	 * @return bool
 	 */
 
-        protected function getRoleAccess($objectRole, $stringRessource)
+        protected function getRoleAccess($objectRole, $stringResource)
         {
 
             foreach($objectRole as $value) {
@@ -115,7 +115,7 @@ class Acl implements Middleware {
 
                 } else {
 
-                    return $this->getUserAccess($value->ressources, $stringRessource);
+                    return $this->getUserAccess($value->resources, $stringResource);
                 }
             }
             return false;            
