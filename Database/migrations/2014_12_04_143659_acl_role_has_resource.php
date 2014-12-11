@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AclRoleHasRessource extends Migration {
+class AclRoleHasResource extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,13 +12,13 @@ class AclRoleHasRessource extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('roles_ressources', function(Blueprint $table)
+		Schema::create('roles_resources', function(Blueprint $table)
 		{
 			$table->integer('role_id')->unsigned();
                         $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-                        $table->integer('ressource_id')->unsigned(); 
-                        $table->foreign('ressource_id')->references('id')->on('ressources')->onDelete('cascade');
-			                  $table->timestamps();
+                        $table->integer('resource_id')->unsigned(); 
+                        $table->foreign('resource_id')->references('id')->on('resources')->onDelete('cascade');
+			$table->timestamps();
 		});
 	}
 
@@ -29,7 +29,7 @@ class AclRoleHasRessource extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('roles_ressources');
+		Schema::drop('roles_resources');
 	}
 
 }
