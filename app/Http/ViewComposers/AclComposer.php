@@ -19,7 +19,7 @@ class AclComposer {
     
     public function compose(View $view)
     {
-        $view->with('acl', $this->aclHelper->getAllTrueResources());
+        $view->with('acl', $this->aclHelper);
     }
     
 }
