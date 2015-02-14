@@ -43,7 +43,6 @@ class AclController extends Controller {
             $this->resource = $resource;
             $this->role     = $role;
             $this->user     = $user;
-            #$this->middleware('acl');
 	}
         
        /**
