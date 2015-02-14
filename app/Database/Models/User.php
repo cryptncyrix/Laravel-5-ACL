@@ -1,5 +1,6 @@
 <?php namespace App\Database\Models;
 
+use Hash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -18,33 +19,99 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $table = 'users';
 
 	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = ['name', 'email', 'password'];
+
+	/**
 	 * The attributes excluded from the model's JSON form.
 	 *
 	 * @var array
 	 */
 	protected $hidden = ['password', 'remember_token'];
+        
+        /**
+         * [role description]
+         * @return [type] [description]
+         */
+        public function resources()
+        {
+            return $this->belongsToMany('\App\Database\Models\Resource', 'users_resources');
 
+        }
+        
+        /**
+         * [role description]
+         * @return [type] [description]
+         * Ressources can have many Roles
+         */
+        public function roles()
+        {
+            return $this->belongsToMany('\App\Database\Models\Role', 'users_roles');
 
-    /**
-     * [role description]
-     * @return [type] [description]
-     * Roles can have many Users
-     */
-    public function roles()
-    {
-        return $this->belongsToMany('\App\Database\Models\Role', 'users_roles');
+        }
+        
+        /**
+         * [getResourcesFromRoleById description]
+         * @return [type] [description]
+         */    
+        public function getResourcesFromUserById($id = 0)
+        {
+            return $this->with('resources')->whereId($id)->get();
+        }
 
-    }
+        /**
+         * [getResourcesFromRoleById description]
+         * @return [type] [description]
+         */  
+        public function setResourceToUserById($id, $data)
+        {
+            return $this->find($id)->resources()->attach($data);
+        }
+        /**
+         * [getResourcesFromRoleById description]
+         * @return [type] [description]
+         */      
+        public function removeResourceFromUserById($id, $data)
+        {
+            return $this->find($id)->resources()->detach($data);
+        }
+        
+        /**
+         * [getResourcesFromRoleById description]
+         * @return [type] [description]
+         */    
+        public function getRolesFromUserById($id = 0)
+        {
+            return $this->with('roles')->whereId($id)->get();
+        }
 
-    /**
-     * [role description]
-     * @return [type] [description]
-     * Roles can have many Ressources
-     */
-    public function ressources()
-    {
-        return $this->belongsToMany('\App\Database\Models\Ressource', 'users_ressources');
-
-    }
-
+        /**
+         * [getResourcesFromRoleById description]
+         * @return [type] [description]
+         */  
+        public function setRoleToUserById($id, $data)
+        {
+            return $this->find($id)->roles()->attach($data);
+        }
+        /**
+         * [getResourcesFromRoleById description]
+         * @return [type] [description]
+         */      
+        public function removeRoleFromUserById($id, $data)
+        {
+            return $this->find($id)->roles()->detach($data);
+        }
+        
+        /**
+         * [getAll description]
+         * @return [type] [description]
+         */
+        public function getAll($limit = 5)
+        {
+            return $this->paginate($limit);
+        }
+        
 }
