@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ressource extends Model {
+class Resource extends Model {
 
 	/**
 	 * The database table used by the model.
@@ -10,20 +10,18 @@ class Ressource extends Model {
 	 * @var string
 	 */
 
-	protected $table = 'ressources';
+	protected $table = 'resources';
 
         /**
 	 * @var array
 	 */
 
-	protected $fillable = [''];
+	protected $fillable = ['name', 'default_access'];
 
         /**
-	 * @var array
+         * No Timestamps
+	 * @var bool
 	 */
-
-	protected $ressource = array();
-
         public $timestamps = false;
 
 
@@ -34,7 +32,7 @@ class Ressource extends Model {
      */
     public function roles()
     {
-        return $this->belongsToMany('\App\Database\Models\Role', 'roles_ressources');
+        return $this->belongsToMany('\App\Database\Models\Role', 'roles_resources');
 
     }
 
@@ -44,7 +42,7 @@ class Ressource extends Model {
      */
     public function users()
     {
-        return $this->belongsToMany('\App\Database\Models\User', 'users_ressources');
+        return $this->belongsToMany('\App\Database\Models\User', 'users_resources');
 
     }
 
@@ -71,7 +69,21 @@ class Ressource extends Model {
     /**
      * [insertNew description]
      * @param  [type] $name           [description]
-     * @param  [type] $default_access [description]
+     * @param  [type] $bool           [description]
+     * @return [type]                 [description]
+     */
+    public function editById($data)
+    {
+        $resource                 = $this->find($data->get('_id'));
+        $resource->name           = $data->get('name');
+        $resource->default_access = $data->get('rights');
+        return $resource->save();
+    }
+    
+    /**
+     * [insertNew description]
+     * @param  [type] $name           [description]
+     * @param  [type] $bool           [description]
      * @return [type]                 [description]
      */
     public function insertNew($name, $bool = NULL)
@@ -79,7 +91,7 @@ class Ressource extends Model {
         $this->name           = $name;
         $this->default_access = $bool;
         return $this->save();
-    }
+    }  
 
     /**
      * [getAccessById description]
@@ -93,7 +105,7 @@ class Ressource extends Model {
 
     /**
      * [getAccessByname description]
-     * @param  integer $id [description]
+     * @param  integer $name [description]
      * @return [type]      [description]
      */
     public function getAccessByname($name = '')
@@ -105,7 +117,15 @@ class Ressource extends Model {
      * [getAll description]
      * @return [type] [description]
      */
-    public function getAll()
+    public function getAll($limit = 5)
+    {
+        return $this->paginate($limit);
+    }
+    /**
+     * [getAll description]
+     * @return [type] [description]
+     */    
+    public function getAllWithoutPaginate()
     {
         return $this->all();
     }
