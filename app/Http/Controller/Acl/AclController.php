@@ -54,44 +54,21 @@ class AclController extends Controller {
 	 */        
         public function getRoleResources($id)
         {
-            $elements = [];
+            
             $dbResource = $this->resource->getAllWithoutPaginate()->toArray();
             $dbRole     = $this->role->getResourcesFromRoleById($id)->toArray();
+            $elements   = ($dbRole != [] ) ? $this->getElements($dbRole[0]['resources'] , $dbResource) : false;
 
-            if($dbRole == [] || ( $dbRole[0]['resources'] == [] && $dbResource == [] ))
+            if($elements == false)
             {
                 return redirect()->route('acl.resource')->with('msg', 
                                      'Bitte erst eine Resource anlegen.');
-            } 
-            else if($dbRole[0]['resources'] == [])
-            {
-                foreach($dbResource as $dbValue)
-                {
-                    $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
-                }                
-            }
-            else
-            {
-                foreach($dbResource as $dbValue)
-                {
-                    foreach($dbRole[0]['resources'] as $value)
-                    {
-
-                        if($dbValue['id'] == $value['id'])
-                        {
-                            $elements[$dbValue['id']] = [0 => true, 1 => $dbValue['name']];
-                            break;
-                        }
-
-                        $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
-                    }
-                }                
             }
 
             return view('acl.getRoleResource', compact('elements', 'id'));
         }
-        
-       /**
+
+        /**
 	 * Create a new authentication controller instance.
 	 * @POST("role/resource", as="acl.doListRoleResources")
          * 
@@ -100,43 +77,15 @@ class AclController extends Controller {
         
         public function postRoleResources(RoleResourcesRequest $request)
         {
-            $delete = $add = [];
-            $input  = $request->except('_token', '_id');  
+            $input = $this->getChangedElements($request);
             
-            foreach($input as $key => $value)
-            {
-
-                if(!is_int($key))
-                {
-                    continue;
-                }
-                
-                if($value == true)
-                {
-                    if($input['old_' . $key] == 0)
-                    {
-                        $add[] = $key;
-                    }
-                    continue;
-                }
-                else
-                {
-                    $delete[] = $key;
-                }
-            }  
-            
-            if($add != [])
-            {
-                $this->role->setResourceToRoleById($request->get('_id'), $add);
-            }
-            if($delete != [])
-            {
-                $this->role->removeResourceFromRoleById($request->get('_id'), $delete);
-            }            
-            return redirect()->route('acl.listRoleResources', $request->get('_id'))->with('msg', 'Die Rechte wurden fÃ¼r die Rolle angepasst.');
+            $this->setAndRemoveById($request->get('_id'), $input, 'Role.Resources');        
+            return redirect()->route('acl.listRoleResources', $request->get('_id'))->with('msg', 'Die Rechte wurden für die Rolle angepasst.');
         }
         
-       /**
+
+
+        /**
 	 * Create a new authentication controller instance.
 	 * @GET("user/resource/{id}", as="acl.listUserResources")
          * 
@@ -145,40 +94,15 @@ class AclController extends Controller {
 	 */        
         public function getUserResources($id)
         {
-            $elements = [];
             $dbResource = $this->resource->getAllWithoutPaginate()->toArray();
-            $dbUser     = $this->user->getResourcesFromUserById($id)->toArray();
+            $dbUser     = $this->user->getResourcesFromUserById($id)->toArray();           
+            $elements   = ($dbUser != [] ) ? $this->getElements($dbUser[0]['resources'] , $dbResource) : false;
 
-            if($dbUser == [] || ( $dbUser[0]['resources'] == [] && $dbResource == [] ))
+            if($elements == false)
             {
                 return redirect()->route('acl.resource')->with('msg', 
                                      'Bitte erst eine Resource anlegen.');
-            } 
-            else if($dbUser[0]['resources'] == [])
-            {
-                foreach($dbResource as $dbValue)
-                {
-                    $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
-                }                
             }
-            else
-            {
-                foreach($dbResource as $dbValue)
-                {
-                    foreach($dbUser[0]['resources'] as $value)
-                    {
-
-                        if($dbValue['id'] == $value['id'])
-                        {
-                            $elements[$dbValue['id']] = [0 => true, 1 => $dbValue['name']];
-                            break;
-                        }
-
-                        $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
-                    }
-                }                
-            }
-
             return view('acl.getUserResource', compact('elements', 'id'));
         }
         
@@ -191,40 +115,9 @@ class AclController extends Controller {
         
         public function postUserResources(UserResourcesRequest $request)
         {
-            $delete = $add = [];
-            $input  = $request->except('_token', '_id');  
-            
-            foreach($input as $key => $value)
-            {
-
-                if(!is_int($key))
-                {
-                    continue;
-                }
-                
-                if($value == true)
-                {
-                    if($input['old_' . $key] == 0)
-                    {
-                        $add[] = $key;
-                    }
-                    continue;
-                }
-                else
-                {
-                    $delete[] = $key;
-                }
-            }  
-            
-            if($add != [])
-            {
-                $this->user->setResourceToUserById($request->get('_id'), $add);
-            }
-            if($delete != [])
-            {
-                $this->user->removeResourceFromUserById($request->get('_id'), $delete);
-            }            
-            return redirect()->route('acl.listUserResources', $request->get('_id'))->with('msg', 'Die Rechte wurden fÃ¼r den User angepasst.');
+            $input = $this->getChangedElements($request);
+            $this->setAndRemoveById($request->get('_id'), $input, 'User.Resources');      
+            return redirect()->route('acl.listUserResources', $request->get('_id'))->with('msg', 'Die Rechte wurden für den User angepasst.');
         }
         
        /**
@@ -236,40 +129,15 @@ class AclController extends Controller {
 	 */        
         public function getUserRoles($id)
         {
-            $elements = [];
             $dbRole     = $this->role->getAllWithoutPaginate()->toArray();
             $dbUser     = $this->user->getRolesFromUserById($id)->toArray();
+            $elements   = ($dbUser != [] ) ? $this->getElements($dbUser[0]['roles'] , $dbRole) : false;
 
-            if($dbUser == [] || ( $dbUser[0]['roles'] == [] && $dbRole == [] ))
+            if($elements == false)
             {
                 return redirect()->route('acl.role')->with('msg', 
                                      'Bitte erst eine Rolle anlegen.');
             } 
-            else if($dbUser[0]['roles'] == [])
-            {
-                foreach($dbRole as $dbValue)
-                {
-                    $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
-                }                
-            }
-            else
-            {
-                foreach($dbRole as $dbValue)
-                {
-                    foreach($dbUser[0]['roles'] as $value)
-                    {
-
-                        if($dbValue['id'] == $value['id'])
-                        {
-                            $elements[$dbValue['id']] = [0 => true, 1 => $dbValue['name']];
-                            break;
-                        }
-
-                        $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
-                    }
-                }                
-            }
-
             return view('acl.getUserRole', compact('elements', 'id'));
         }
         
@@ -282,12 +150,75 @@ class AclController extends Controller {
         
         public function postUserRoles(UserResourcesRequest $request)
         {
+            $input = $this->getChangedElements($request);
+            $this->setAndRemoveById($request->get('_id'), $input, 'User.Roles'); 
+            return redirect()->route('acl.listUserRoles', $request->get('_id'))->with('msg', 'Die Rollen wurden für den User angepasst.');
+        }
+        
+       /**
+	 * Create a new authentication controller instance.
+	 * @GET("overview", as="acl.overview")
+         * 
+	 * @param  integer  $id
+	 * @return void
+	 */        
+        public function getOverview()
+        {
+            return view('acl.getOverview');
+        }
+        
+        /**
+         * Get all Elements from Database
+         * @param array $dbAll
+         * @param array $dbFromId
+         * @return boolean
+         */
+        
+        protected function getElements(array $dbAll, array $dbFromId)
+        {
+            $elements = [];
+            if($dbAll == [] && $dbFromId == [])
+            {
+                return false;
+            } 
+            else if($dbAll == [])
+            {
+                foreach($dbFromId as $dbValue)
+                {
+                    $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
+                }                
+            }
+            else
+            {
+                foreach($dbFromId as $dbValue)
+                {
+                    foreach($dbAll as $value)
+                    {
+
+                        if($dbValue['id'] == $value['id'])
+                        {
+                            $elements[$dbValue['id']] = [0 => true, 1 => $dbValue['name']];
+                            break;
+                        }
+
+                        $elements[$dbValue['id']] = [0 => false, 1 => $dbValue['name']];
+                    }
+                }                
+            }
+            return $elements;
+        }
+        /**
+         * Get all Changed Elements from Request
+         * @param Request $request
+         * @return array
+         */
+        protected function getChangedElements($request)
+        {
             $delete = $add = [];
             $input  = $request->except('_token', '_id');  
             
             foreach($input as $key => $value)
             {
-
                 if(!is_int($key))
                 {
                     continue;
@@ -306,27 +237,32 @@ class AclController extends Controller {
                     $delete[] = $key;
                 }
             }  
-            
-            if($add != [])
-            {
-                $this->user->setRoleToUserById($request->get('_id'), $add);
-            }
-            if($delete != [])
-            {
-                $this->user->removeRoleFromUserById($request->get('_id'), $delete);
-            }            
-            return redirect()->route('acl.listUserRoles', $request->get('_id'))->with('msg', 'Die Rollen wurden fÃ¼r den User angepasst.');
-        }
+            return ['add' => $add, 'delete' => $delete];
+        }    
         
-       /**
-	 * Create a new authentication controller instance.
-	 * @GET("overview", as="acl.overview")
-         * 
-	 * @param  integer  $id
-	 * @return void
-	 */        
-        public function getOverview()
+        /**
+         * Set and Remove the Input to the Database from the Form
+         * @param integer $id
+         * @param array $input
+         * @param string $function
+         * @return boolean
+         */
+        protected function setAndRemoveById($id, $input, $function)
         {
-            return view('acl.getOverview');
+            $setString    = 'set' . substr(strstr($function, '.'),1 ) . 'To' . 
+                           strstr($function, '.', true) . 'ById';
+            
+            $removeString = 'remove' . substr(strstr($function, '.'),1 ) . 'From' . 
+                           strstr($function, '.', true) . 'ById';
+            
+            if($input['add'] != [])
+            {
+                $this->{strtolower(strstr($function, '.', true))}->{$setString}($id, $input['add']);
+            }
+            if($input['delete'] != [])
+            {
+                $this->{strtolower(strstr($function, '.', true))}->{$removeString}($id, $input['delete']);
+            }
+            return true;
         }
 }
