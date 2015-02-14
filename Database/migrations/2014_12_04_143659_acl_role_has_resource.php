@@ -18,6 +18,7 @@ class AclRoleHasResource extends Migration {
                         $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
                         $table->integer('resource_id')->unsigned(); 
                         $table->foreign('resource_id')->references('id')->on('resources')->onDelete('cascade');
+                        $table->unique(array('role_id', 'resource_id'), 'roleid_resourceid');
 			$table->timestamps();
 		});
 	}
