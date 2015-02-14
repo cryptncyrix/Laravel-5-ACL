@@ -16,7 +16,7 @@ class AclResource extends Migration {
 		{
 			$table->increments('id')->unsigned();
                         $table->string('name')->unique();
-                        $table->boolean('default_access')->nullable()->default(NULL);
+                        $table->boolean('default_access');
 			$table->timestamps();
 		});
 	}
