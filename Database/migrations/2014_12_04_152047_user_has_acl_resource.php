@@ -18,6 +18,7 @@ class UserHasAclResource extends Migration {
                         $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 			$table->integer('resource_id')->unsigned();
                         $table->foreign('resource_id')->references('id')->on('resources')->onDelete('cascade');
+                        $table->unique(array('user_id', 'resource_id'), 'userid_resourceid');
 			$table->timestamps();
 
 		});
