@@ -66,7 +66,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
          * [getResourcesFromRoleById description]
          * @return [type] [description]
          */  
-        public function setResourceToUserById($id, $data)
+        public function setResourcesToUserById($id, $data)
         {
             return $this->find($id)->resources()->attach($data);
         }
@@ -74,7 +74,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
          * [getResourcesFromRoleById description]
          * @return [type] [description]
          */      
-        public function removeResourceFromUserById($id, $data)
+        public function removeResourcesFromUserById($id, $data)
         {
             return $this->find($id)->resources()->detach($data);
         }
@@ -92,7 +92,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
          * [getResourcesFromRoleById description]
          * @return [type] [description]
          */  
-        public function setRoleToUserById($id, $data)
+        public function setRolesToUserById($id, $data)
         {
             return $this->find($id)->roles()->attach($data);
         }
@@ -100,7 +100,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
          * [getResourcesFromRoleById description]
          * @return [type] [description]
          */      
-        public function removeRoleFromUserById($id, $data)
+        public function removeRolesFromUserById($id, $data)
         {
             return $this->find($id)->roles()->detach($data);
         }
