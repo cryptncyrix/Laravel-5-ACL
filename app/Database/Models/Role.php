@@ -22,7 +22,7 @@ class Role extends Model {
 	 * @var array
 	 */
 
-	protected $role = [];
+	protected $role = array();
 
 
     /**
@@ -134,7 +134,7 @@ class Role extends Model {
      * [getResourcesFromRoleById description]
      * @return [type] [description]
      */  
-    public function setResourceToRoleById($id, $data)
+    public function setResourcesToRoleById($id, $data)
     {
         return $this->find($id)->resources()->attach($data);
     }
@@ -142,7 +142,7 @@ class Role extends Model {
      * [getResourcesFromRoleById description]
      * @return [type] [description]
      */      
-    public function removeResourceFromRoleById($id, $data)
+    public function removeResourcesFromRoleById($id, $data)
     {
         return $this->find($id)->resources()->detach($data);
     }
