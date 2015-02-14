@@ -31,7 +31,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="{{ route('index') }}">Acl</a>
+				<a class="navbar-brand" href="{{ route('index') }}">Home</a>
 			</div>
 
 			<div id="navbar" class="navbar-collapse collapse">
