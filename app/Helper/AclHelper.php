@@ -53,7 +53,7 @@ class AclHelper {
      * @return boolean
      */  
     
-    public function checkUserPermissions($toCheckedString, $defaultAccess = false)
+    public function checkUserPermissions($toCheckedString, $defaultAccess = null)
     {   
         if(!$this->auth->guest())
         {
