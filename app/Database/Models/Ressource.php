@@ -51,7 +51,7 @@ class Resource extends Model {
      * @param  string $name [description]
      * @return [type]       [description]
      */
-    public function findByName($name = 'lol')
+    public function findByName($name = 'foF')
     {
         return $this->whereName($name)->firstOrFail();
     }
