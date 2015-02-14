@@ -16,13 +16,13 @@ class Role extends Model {
 	 * @var array
 	 */
 
-	protected $fillable = [''];
+	protected $fillable = ['name', 'default_access'];
 
         /**
 	 * @var array
 	 */
 
-	protected $role = array();
+	protected $role = [];
 
 
     /**
@@ -30,9 +30,9 @@ class Role extends Model {
      * @return [type] [description]
      * Ressources can have many Roles
      */
-    public function ressources()
+        public function resources()
     {
-        return $this->belongsToMany('\App\Database\Models\Ressource', 'roles_ressources');
+        return $this->belongsToMany('\App\Database\Models\Resource', 'roles_resources');
 
     }
 
@@ -51,7 +51,7 @@ class Role extends Model {
      * @param  string $name [description]
      * @return [type]       [description]
      */
-    public function findByName($name = 'lol')
+    public function findByName($name = 'foF')
     {
         return $this->whereName($name)->firstOrFail();
     }
@@ -69,7 +69,21 @@ class Role extends Model {
     /**
      * [insertNew description]
      * @param  [type] $name           [description]
-     * @param  [type] $default_access [description]
+     * @param  [type] $bool           [description]
+     * @return [type]                 [description]
+     */
+    public function editById($data)
+    {
+        $role                 = $this->find($data->get('_id'));
+        $role->name           = $data->get('name');
+        $role->default_access = $data->get('rights');
+        return $role->save();
+    }
+    
+    /**
+     * [insertNew description]
+     * @param  [type] $name           [description]
+     * @param  [type] $bool [description]
      * @return [type]                 [description]
      */
     public function insertNew($name, $bool = NULL)
@@ -93,8 +107,43 @@ class Role extends Model {
      * [getAll description]
      * @return [type] [description]
      */
-    public function getAll()
+    public function getAll($limit = 5)
+    {
+        return $this->paginate($limit);
+    }
+    
+    /**
+     * [getAll description]
+     * @return [type] [description]
+     */    
+    public function getAllWithoutPaginate()
     {
         return $this->all();
+    }
+    
+    /**
+     * [getResourcesFromRoleById description]
+     * @return [type] [description]
+     */    
+    public function getResourcesFromRoleById($id = 0)
+    {
+        return $this->with('resources')->whereId($id)->get();
+    }
+    
+    /**
+     * [getResourcesFromRoleById description]
+     * @return [type] [description]
+     */  
+    public function setResourceToRoleById($id, $data)
+    {
+        return $this->find($id)->resources()->attach($data);
+    }
+    /**
+     * [getResourcesFromRoleById description]
+     * @return [type] [description]
+     */      
+    public function removeResourceFromRoleById($id, $data)
+    {
+        return $this->find($id)->resources()->detach($data);
     }
 }
