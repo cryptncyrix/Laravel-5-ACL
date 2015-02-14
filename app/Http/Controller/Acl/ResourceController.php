@@ -36,7 +36,6 @@ class ResourceController extends Controller {
 	public function __construct(Resource $resource)
 	{
             $this->resource = $resource;
-            #$this->middleware('auth');
 	}
 
 	/**
