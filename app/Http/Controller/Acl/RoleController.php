@@ -35,7 +35,6 @@ class RoleController extends Controller {
 	public function __construct(Role $role)
 	{
             $this->role = $role;
-            #$this->middleware('acl');
 	}
 
 	/**
