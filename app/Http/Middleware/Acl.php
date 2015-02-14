@@ -5,6 +5,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Routing\Middleware;
 
 use App\Database\Models\Resource;
+use App\Helper\AclHelper;
 
 class Acl implements Middleware {
 
@@ -29,9 +30,8 @@ class Acl implements Middleware {
 	 * @return void
 	 */
   	public function __construct(Guard $auth, Resource $resource)
-	 {
- 		$this->auth     = $auth;
-                $this->resource = $resource;
+	{
+            $this->aclHelper = new AclHelper($auth, $resource);
   	}
 
 	/**
@@ -43,81 +43,11 @@ class Acl implements Middleware {
 	 */
         public function handle($request, Closure $next)
 	{
-	    if ( ! $this->auth->guest() )
+	    if ( $this->aclHelper->checkUserPermissions($request->route()->getName()) )
 	    {
-
-                $objectUser = $this->auth->user();
-                $objectUser->load('roles', 'roles.resources', 'resources');
-    
-                if( $this->getUserAccess($objectUser->resources,  $request->route()->getName())   )
-                {
-                    return $next($request);
-
-                } else if( $this->getRoleAccess($objectUser->roles,  $request->route()->getName() ) )
-                {
-                    return $next($request);
-
-                } else if( $this->getDefaultAccess( $request->route()->getName() ) )
-                {
-                    return $next($request); 
-                }
-	    }	
+                return $next($request);
+            }
             return ($request->ajax()) ? response('Unauthorized.', 401) : redirect()->guest('auth/login');    
 	}
 
-	/**
-	 * Get the default access for this resource
-	 *
-	 * @param  $stringName
-	 * @return bool
-	 */
-
-        protected function getDefaultAccess($stringName) 
-        {
-            return $this->resource->getAccessByname($stringName)->default_access;
-        }
-
-	/**
-	 * Check - is the ressource set ;)
-	 *
-	 * @param  $objectResources
-	 * @param  $stringResource
-	 * @return bool
-	 */
-
-        protected function getUserAccess($objectResources, $stringResource)
-        {
-            foreach($objectResources as $value) {
-
-                 if($value->name == $stringResource){
-                     return true;
-                 }
-            }  
-            return false;          
-        }
-
-	/**
-	 * Check - has the Role the Resource ;)
-	 *
-	 * @param  $objectRole
-	 * @param  $stringResource
-	 * @return bool
-	 */
-
-        protected function getRoleAccess($objectRole, $stringResource)
-        {
-
-            foreach($objectRole as $value) {
-
-                if($value->default_access == true) 
-                {
-                    return true;
-
-                } else {
-
-                    return $this->getUserAccess($value->resources, $stringResource);
-                }
-            }
-            return false;            
-        }
 }
