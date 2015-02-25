@@ -4,31 +4,34 @@ use Illuminate\Database\Eloquent\Model;
 
 class Resource extends Model {
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
 
-	protected $table = 'resources';
+    protected $table = 'resources';
 
-        /**
-	 * @var array
-	 */
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
 
-	protected $fillable = ['name', 'default_access'];
+    protected $fillable = ['name', 'default_access'];
 
-        /**
-         * No Timestamps
-	 * @var bool
-	 */
-        public $timestamps = false;
+    /**
+     * Set Timestamps
+     * 
+     * @var type 
+     */
+    public $timestamps = false;
 
 
     /**
-     * [role description]
-     * @return [type] [description]
-     * Ressources can have many Roles
+     * @param void
+     *
+     * @return @return \Illuminate\Database\Eloquent\Relations\belongsToMany
      */
     public function roles()
     {
@@ -37,8 +40,9 @@ class Resource extends Model {
     }
 
     /**
-     * [role description]
-     * @return [type] [description]
+     * @param void
+     *
+     * @return @return \Illuminate\Database\Eloquent\Relations\belongsToMany
      */
     public function users()
     {
@@ -47,19 +51,19 @@ class Resource extends Model {
     }
 
     /**
-     * [findByName description]
-     * @param  string $name [description]
-     * @return [type]       [description]
+     * Find the resource by Name
+     * @param  string $name | default home
+     * @return object
      */
-    public function findByName($name = 'foF')
+    public function findByName($name = 'home')
     {
-        return $this->whereName($name)->firstOrFail();
+        return $this->whereName($name)->first();
     }
 
     /**
-     * [getNameById description]
-     * @param  integer $id [description]
-     * @return [type]      [description]
+     * Get the resource Name by Id
+     * @param  integer $id | default 0
+     * @return object
      */
     public function getNameById($id = 0)
     {
@@ -67,10 +71,9 @@ class Resource extends Model {
     }
     
     /**
-     * [insertNew description]
-     * @param  [type] $name           [description]
-     * @param  [type] $bool           [description]
-     * @return [type]                 [description]
+     * Edit the resource by Id
+     * @param  object $data
+     * @return bool
      */
     public function editById($data)
     {
@@ -81,10 +84,10 @@ class Resource extends Model {
     }
     
     /**
-     * [insertNew description]
-     * @param  [type] $name           [description]
-     * @param  [type] $bool           [description]
-     * @return [type]                 [description]
+     * Insert a new One
+     * @param string $name
+     * @param bool $bool | default NULL - DefaultAccess for Resource
+     * @return bool
      */
     public function insertNew($name, $bool = NULL)
     {
@@ -92,11 +95,31 @@ class Resource extends Model {
         $this->default_access = $bool;
         return $this->save();
     }  
+    
+    /**
+     * Set all Routes as Resource
+     * @param object $routes
+     * @return \App\Database\Models\Resource
+     */
+    public function setAllNewRoutesToResources($routes)
+    {
+        foreach($routes as $value)
+        {
+            if(is_null($value->getName()))
+            {
+                continue;
+            }
+
+           $this->firstOrCreate(['name' => $value->getName()]);
+        }   
+        
+        return $this;
+    }
 
     /**
-     * [getAccessById description]
-     * @param  integer $id [description]
-     * @return [type]      [description]
+     * Get the default_access from resource by Id
+     * @param  integer $id | default 0
+     * @return bool
      */
     public function getAccessById($id = 0)
     {
@@ -104,9 +127,9 @@ class Resource extends Model {
     }
 
     /**
-     * [getAccessByname description]
-     * @param  integer $name [description]
-     * @return [type]      [description]
+     * Get the default_access from resource by Name
+     * @param  string $name | default emptystring
+     * @return bool
      */
     public function getAccessByname($name = '')
     {
@@ -114,16 +137,19 @@ class Resource extends Model {
     }
     
     /**
-     * [getAll description]
-     * @return [type] [description]
+     * Get all Resource with Paginate
+     * @param  integer $limit | default 25
+     * @return object
      */
-    public function getAll($limit = 5)
+    
+    public function getAll($limit = 25)
     {
         return $this->paginate($limit);
     }
+    
     /**
-     * [getAll description]
-     * @return [type] [description]
+     * Get all Resource without Paginate
+     * @return object
      */    
     public function getAllWithoutPaginate()
     {
