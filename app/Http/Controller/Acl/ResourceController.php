@@ -43,7 +43,7 @@ class ResourceController extends Controller {
      */
     public function getResource()
     {
-            return view('resource.create');
+        return view('resource.create');
     }
 
     /**
