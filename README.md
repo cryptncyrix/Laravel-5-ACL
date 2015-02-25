@@ -6,15 +6,11 @@ Check User-Permissions
 
 Edit config/app and add
 
-/*
- * My Providers
- */
+//My Provider
 'App\Providers\AclServiceProvider',
 
 and
 
-/*
- * My Providers
- */
+//My Facade
 
 'AclHelper'     => 'App\Facades\AclHelper',
