@@ -23,7 +23,10 @@
                                             <td>{!! $value->id !!}</td>
                                             <td>{!! $value->name !!}</td>
                                             <td>{!! $value->default_access !!}</td>
-                                            <td><a href="{{ route('acl.editResource', $value->name) }}">Bearbeiten</a></td>
+                                            <td>@if(hasResource('acl.editResource'))
+                                                <a href="{{ route('acl.editResource', $value->name) }}">Bearbeiten</a>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
