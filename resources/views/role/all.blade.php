@@ -23,8 +23,13 @@
                                             <td>{!! $value->id !!}</td>
                                             <td>{!! $value->name !!}</td>
                                             <td>{!! $value->default_access !!}</td>
-                                            <td><a href="{!! route('acl.editRole', $value->name) !!}">Bearbeiten</a>
-                                                <a href="{!! route('acl.listRoleResources', $value->id) !!}">Resourcen der Rolle hinzufÃ¼gen</a></td>
+                                            <td>@if(hasResource('acl.editRole'))
+                                                <a href="{!! route('acl.editRole', $value->name) !!}">Bearbeiten</a>
+                                                @endif
+                                                @if(hasResource('acl.listRoleResources'))
+                                                <a href="{!! route('acl.listRoleResources', $value->id) !!}">Resourcen der Rolle hinzufügen</a>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
