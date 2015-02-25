@@ -12,9 +12,8 @@ class ComposerServiceProvider extends ServiceProvider {
      */
     public function boot(ViewFactory $view)
     {
-        // Kann um die eigene Struktur erweitert und geändert werden
-        
-        $view->composer('user.*', 'App\Http\ViewComposers\AclComposer');
+        // Hier können Sachen für die View hinterlegt werden
+        // Wo soll die Variabel genutzt werden
     }
 
     public function register() {
