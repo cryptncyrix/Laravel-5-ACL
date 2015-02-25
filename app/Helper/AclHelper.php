@@ -17,18 +17,27 @@ class AclHelper {
      */
     protected $user;
 
+    /**
+     * resources
+     * @var array 
+     */    
+    protected $resources = [];
+   
 
     /**
      * 
-     * @param Guard $auth
      * @param Resource $resource
+     * @param Guard $auth
      */
-    public function __construct(Guard $auth, Resource $resource) 
+
+    public function __construct(Resource $resource, Guard $auth) 
     {
-        $this->auth     = $auth;
         $this->resource = $resource;
+        $this->auth = $auth;
         $this->getAllUserPermissions();
+        $this->getAllTrueResources();
     }
+
 
     /**
      * Get all User Auth Data
@@ -41,8 +50,7 @@ class AclHelper {
         if(!$this->auth->guest())
         {
             $this->user = $this->auth->user();
-            $this->user->load('roles', 'roles.resources', 'resources');   
-            return $this;
+            $this->user->load('roles', 'roles.resources', 'resources');
         }
         
     }
@@ -80,17 +88,28 @@ class AclHelper {
      */    
     public function getAllTrueResources()
     {
-        $array = [];
+
+        //$array = [];
         foreach($this->resource->getAllWithoutPaginate() as $value)
         {
             if($this->checkUserPermissions($value['name'], $value['default_access']))
             {
-                $array[] = $value['name'];
+                $this->resources[] = $value['name'];
             }
         }
-        return $array;
+        return $this->resources;
     }
     
+    /**
+     * Check the User Rights
+     * @param string $toCheckedString
+     * @return type
+     */
+    public function hasResource($toCheckedString)
+    {
+        return (in_array($toCheckedString, $this->resources));
+    }
+
     /**
      * Get the default access for this resource
      *
