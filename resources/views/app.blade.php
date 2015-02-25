@@ -39,11 +39,22 @@
 					<li><a href="{{ route('index') }}">Home</a></li>
 				</ul>
                                 @if (Auth::check())
-                                <ul class="nav navbar-nav navbar-left">
-                                        <li class="dropdown">
-                                            <a href="{{ route('acl.overview') }}" >Acl Übersicht</a>
-                                        </li>
-                                </ul>
+	                                @if(hasResource('acl.overview') || hasResource('acl.role') || hasResource('acl.resource'))                                       
+	                                <li class="dropdown" >
+	                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+	                                    <ul class="dropdown-menu">
+	                                        @if(hasResource('acl.overview')) 
+	                                            <li><a href="{{ route('acl.overview') }}"><i class="fa fa-btn fa-dashboard"></i> Übersicht</a></li>
+	                                        @endif 
+	                                        @if(hasResource('acl.role'))
+	                                            <li><a href="{{ route('acl.role') }}"><i class="fa fa-btn fa-plus"></i> Rolle anlegen</a></li>
+	                                        @endif 
+	                                        @if(hasResource('acl.resource'))
+	                                        <li><a href="{{ route('acl.resource') }}"><i class="fa fa-btn fa-plus"></i> Rechte anlegen</a></li>
+	                                        @endif 
+	                                    </ul>
+	                                </li> 
+	                                @endif 
 				
                                 <ul class="nav navbar-nav navbar-right">
                                         <li class="dropdown">
