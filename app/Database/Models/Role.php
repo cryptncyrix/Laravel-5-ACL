@@ -4,42 +4,44 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model {
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
 
-	protected $table = 'roles';
+    protected $table = 'roles';
 
-        /**
-	 * @var array
-	 */
-
-	protected $fillable = ['name', 'default_access'];
-
-        /**
-	 * @var array
-	 */
-
-	protected $role = array();
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'default_access'];
+    
+    /**
+     * Set Timestamps
+     * 
+     * @var type 
+     */
+    public $timestamps = false;
 
 
     /**
-     * [role description]
-     * @return [type] [description]
-     * Ressources can have many Roles
+     * @param void
+     *
+     * @return @return \Illuminate\Database\Eloquent\Relations\belongsToMany
      */
-        public function resources()
+    public function resources()
     {
         return $this->belongsToMany('\App\Database\Models\Resource', 'roles_resources');
 
     }
 
     /**
-     * [role description]
-     * @return [type] [description]
-     * Ressources can have many Roles
+     * @param void
+     *
+     * @return @return \Illuminate\Database\Eloquent\Relations\belongsToMany
      */
     public function users()
     {
@@ -47,19 +49,19 @@ class Role extends Model {
 
     }
     /**
-     * [findByName description]
-     * @param  string $name [description]
-     * @return [type]       [description]
+     * Find the role by Name
+     * @param  string $name | default admin
+     * @return object
      */
-    public function findByName($name = 'foF')
+    public function findByName($name = 'admin')
     {
         return $this->whereName($name)->firstOrFail();
     }
 
     /**
-     * [getNameById description]
-     * @param  integer $id [description]
-     * @return [type]      [description]
+     * Get the role Name by Id
+     * @param  integer $id | default 0
+     * @return object
      */
     public function getNameById($id = 0)
     {
@@ -67,10 +69,9 @@ class Role extends Model {
     }
     
     /**
-     * [insertNew description]
-     * @param  [type] $name           [description]
-     * @param  [type] $bool           [description]
-     * @return [type]                 [description]
+     * Edit the role by Id
+     * @param  object $data
+     * @return bool
      */
     public function editById($data)
     {
@@ -81,10 +82,10 @@ class Role extends Model {
     }
     
     /**
-     * [insertNew description]
-     * @param  [type] $name           [description]
-     * @param  [type] $bool [description]
-     * @return [type]                 [description]
+     * Insert a new One
+     * @param string $name
+     * @param bool $bool | default NULL - DefaultAccess for Resource
+     * @return bool
      */
     public function insertNew($name, $bool = NULL)
     {
@@ -94,27 +95,28 @@ class Role extends Model {
     }
 
     /**
-     * [getAccessById description]
-     * @param  integer $id [description]
-     * @return [type]      [description]
+     * Get the access from resource by Id
+     * @param  integer $id | default 0
+     * @return bool
      */
     public function getAccessById($id = 0)
     {
-        return $this->whereId($id)->firstOrFail(array('access'));   
+        return $this->whereId($id)->firstOrFail(array('default_access'));   
     }
     
     /**
-     * [getAll description]
-     * @return [type] [description]
+     * Get all Roles with Paginate
+     * @param  integer $limit | default 25
+     * @return object
      */
-    public function getAll($limit = 5)
+    public function getAll($limit = 25)
     {
         return $this->paginate($limit);
     }
     
     /**
-     * [getAll description]
-     * @return [type] [description]
+     * Get all Roles without Paginate
+     * @return object
      */    
     public function getAllWithoutPaginate()
     {
@@ -122,8 +124,9 @@ class Role extends Model {
     }
     
     /**
-     * [getResourcesFromRoleById description]
-     * @return [type] [description]
+     * Get all resources from role by id
+     * @param integer $id | default 0
+     * @return object
      */    
     public function getResourcesFromRoleById($id = 0)
     {
@@ -131,17 +134,21 @@ class Role extends Model {
     }
     
     /**
-     * [getResourcesFromRoleById description]
-     * @return [type] [description]
-     */  
+     * Set the Resource to Role
+     * @param integer $id 
+     * @param object $data
+     * @return object
+     */   
     public function setResourcesToRoleById($id, $data)
     {
         return $this->find($id)->resources()->attach($data);
     }
     /**
-     * [getResourcesFromRoleById description]
-     * @return [type] [description]
-     */      
+     * Remove the Resource from Role
+     * @param integer $id 
+     * @param object $data
+     * @return object
+     */       
     public function removeResourcesFromRoleById($id, $data)
     {
         return $this->find($id)->resources()->detach($data);
