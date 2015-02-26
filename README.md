@@ -25,6 +25,7 @@
 ###### Usage
 
 > Controller Example Class and Method
+
 ```php
 /**
  * @Middleware("acl")
@@ -32,6 +33,7 @@
 ```
 
 > Blade Example
+
 ```php
 @if(hasResource('acl.listUserResources'))
     <a href="{!! route('acl.listUserResources', 1) !!}">User Rechte hinzufügen </a>
