@@ -21,6 +21,14 @@
     // ...
   ];
 ```
+> Edit App\Http\Kernel and add the following lines
+
+```php
+    protected $routeMiddleware = [
+	  //
+    'acl' => 'App\Http\Middleware\Acl',
+    ];
+```
 
 ###### Usage
 
