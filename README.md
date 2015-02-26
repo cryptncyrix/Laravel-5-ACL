@@ -42,7 +42,7 @@
 
 ###### Requirements
 
-> - <a href="http://laravel.com/docs/5.0">Laravel 5</a>
+- <a href="http://laravel.com/docs/5.0">Laravel 5</a>
 - <a href="https://github.com/LaravelCollective/annotations">LaravelCollective/annotations</a>
 - <a href="https://github.com/LaravelCollective/html">Laravel Form and Html Package</a>
 
