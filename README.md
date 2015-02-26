@@ -1,9 +1,9 @@
 #### Access Control List for Laravel 5
 
-> Give user individual rights and roles 
+> Give user individual rights and roles
 
 ###### Install
--
+
 > Edit config/app and add the following lines
 
 ```php
@@ -38,6 +38,12 @@
 @endif
 ```
 
+###### Requirements
+
+> - <a href="http://laravel.com/docs/5.0">Laravel 5</a>
+- <a href="https://github.com/LaravelCollective/annotations">LaravelCollective/annotations</a>
+- <a href="https://github.com/LaravelCollective/html">Laravel Form and Html Package</a>
+
 ## Todo
-- Composer Install
-- Command to Install Resources and Roles
+- [ ] Composer Install
+- [ ] Command to Install Resources and Roles
