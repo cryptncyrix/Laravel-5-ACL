@@ -31,7 +31,7 @@ class Acl implements Middleware {
             return $next($request);
         }
 
-        return ($request->ajax()) ? response('Unauthorized.', 401) : redirect()->back();    
+        return ($request->ajax()) ? response('Unauthorized.', 401) : response()->view('errors.401', [], 401);   
     }
 
 }
