@@ -1,6 +1,7 @@
 <?php namespace App\Database\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Hash;
 
 class User extends Model {
 
@@ -17,6 +18,14 @@ class User extends Model {
      * @var array
      */
     protected $fillable = ['name', 'email', 'password'];
+    
+     /**
+     * @param $password
+     */
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = Hash::make($password);
+    }
         
     /**
      * @param void
@@ -38,6 +47,55 @@ class User extends Model {
     {
         return $this->belongsToMany('\App\Database\Models\Role', 'users_roles');
 
+    }
+    
+    /**
+     * @param $data
+     *
+     * @return bool
+     */
+    public function insertNewUser($data)
+    {
+        $this->name = $data->name;
+        $this->email = $data->email;
+        $this->password = $data->password;
+
+        return $this->save();
+
+    }
+
+    /**
+     * @param $data
+     *
+     * @return bool
+     */
+    public function setNewPassword($data, $id)
+    {
+        $user = User::find($id);
+        $user->password = $data['password'];
+
+        return $user->save();
+
+    }
+
+    /**
+     * @param $data
+     * @param $id
+     * @return bool
+     */
+    public function editDataById($data, $id)
+    {
+        $user = User::find($id);
+        
+        foreach($data as $key => $value)
+        {
+            if(!empty($value))
+            {
+                $user->{$key} = $value;
+            }
+        }
+
+        return $user->save();
     }
         
     /**
