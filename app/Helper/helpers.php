@@ -12,7 +12,7 @@ function hasResource($name)
 {
     return app('aclhelper')->hasResource($name);
 }
-^
+
 /**
  * @param string $fallBack
  * @return mixed
